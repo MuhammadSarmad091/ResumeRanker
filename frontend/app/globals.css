@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+/* Match Tailwind `dark:` utilities to `html.dark` (manual theme), not OS-only */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+  --background: #f8f9fb;
+  --foreground: #0f1419;
+  --rr-bg: #f8f9fb;
+  --rr-fg: #0f1419;
+  --rr-muted: #5c6570;
+  --rr-border: #e6e8ec;
+  --rr-surface: #ffffff;
+  --rr-hover: #f0f2f5;
+  --rr-accent: #4f46e5;
+  --rr-accent-muted: rgba(79, 70, 229, 0.1);
+  --rr-glow: rgba(79, 70, 229, 0.35);
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #0c0e12;
+  --foreground: #f1f3f5;
+  --rr-bg: #0c0e12;
+  --rr-fg: #f1f3f5;
+  --rr-muted: #9aa3ad;
+  --rr-border: #252a32;
+  --rr-surface: #12161c;
+  --rr-hover: #1a2028;
+  --rr-accent: #818cf8;
+  --rr-accent-muted: rgba(129, 140, 248, 0.12);
+  --rr-glow: rgba(129, 140, 248, 0.25);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.rr-app-bg {
+  background-color: var(--rr-bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, var(--rr-glow), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(99, 102, 241, 0.08), transparent);
+}
+
+.dark .rr-app-bg {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, var(--rr-glow), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(129, 140, 248, 0.06), transparent);
+}
+
+.rr-hero-mesh {
+  background:
+    radial-gradient(at 40% 20%, rgba(79, 70, 229, 0.15), transparent 50%),
+    radial-gradient(at 80% 0%, rgba(14, 165, 233, 0.12), transparent 45%),
+    radial-gradient(at 0% 50%, rgba(99, 102, 241, 0.1), transparent 40%);
+}
+
+.dark .rr-hero-mesh {
+  background:
+    radial-gradient(at 40% 20%, rgba(129, 140, 248, 0.12), transparent 50%),
+    radial-gradient(at 80% 0%, rgba(56, 189, 248, 0.08), transparent 45%),
+    radial-gradient(at 0% 50%, rgba(129, 140, 248, 0.08), transparent 40%);
+}
+
+.rr-card {
+  border: 1px solid var(--rr-border);
+  background: var(--rr-surface);
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px rgba(15, 20, 25, 0.04);
+}
+
+.dark .rr-card {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.rr-file-input {
+  width: 100%;
+  font-size: 0.875rem;
+  color: var(--rr-muted);
+}
+
+.rr-file-input::file-selector-button {
+  margin-right: 0.75rem;
+  border: 0;
+  border-radius: 0.75rem;
+  background: var(--rr-accent);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+}
+
+.rr-file-input::file-selector-button:hover {
+  opacity: 0.92;
+}
