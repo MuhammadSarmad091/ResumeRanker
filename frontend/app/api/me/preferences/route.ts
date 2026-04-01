@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth-server";
 import { preferencesSchema } from "@/lib/prefs";
-import { getPreferencesForUser, updatePreferencesForUser } from "@/lib/prefs-store";
+import { patchPreferencesDb, readPreferencesDb } from "@/lib/server/services/user-service";
 
 export const runtime = "nodejs";
 
@@ -12,7 +12,7 @@ export async function GET() {
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const prefs = getPreferencesForUser(session.sub);
+  const prefs = await readPreferencesDb(session.sub);
   return NextResponse.json({ preferences: prefs });
 }
 
@@ -35,7 +35,7 @@ export async function PATCH(request: Request) {
   }
 
   try {
-    const prefs = updatePreferencesForUser(session.sub, parsed.data);
+    const prefs = await patchPreferencesDb(session.sub, parsed.data);
     return NextResponse.json({ preferences: prefs });
   } catch {
     return NextResponse.json({ error: "Could not save" }, { status: 500 });
