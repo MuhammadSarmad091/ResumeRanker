@@ -15,12 +15,14 @@ export type SessionPayload = {
   sub: string;
   email: string;
   name: string;
+  tokenType?: "access" | "refresh";
 };
 
 export async function signSessionToken(payload: SessionPayload): Promise<string> {
   return new jose.SignJWT({
     email: payload.email,
     name: payload.name,
+    tokenType: "access",
   })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(payload.sub)
@@ -29,23 +31,40 @@ export async function signSessionToken(payload: SessionPayload): Promise<string>
     .sign(getJwtSecretKey());
 }
 
-export async function verifySessionToken(
-  token: string
-): Promise<SessionPayload | null> {
+export async function signRefreshToken(payload: SessionPayload): Promise<string> {
+  return new jose.SignJWT({
+    email: payload.email,
+    name: payload.name,
+    tokenType: "refresh",
+  })
+    .setProtectedHeader({ alg: "HS256" })
+    .setSubject(payload.sub)
+    .setIssuedAt()
+    .setExpirationTime("7d")
+    .sign(getJwtSecretKey());
+}
+
+export async function verifySessionToken(token: string): Promise<SessionPayload | null> {
   try {
     const { payload } = await jose.jwtVerify(token, getJwtSecretKey());
     const sub = payload.sub;
     const email = payload.email;
     const name = payload.name;
-    if (
-      typeof sub !== "string" ||
-      typeof email !== "string" ||
-      typeof name !== "string"
-    ) {
+    if (typeof sub !== "string" || typeof email !== "string" || typeof name !== "string") {
       return null;
     }
-    return { sub, email, name };
+    const tokenType = payload.tokenType;
+    if (tokenType !== undefined && tokenType !== "access" && tokenType !== "refresh") {
+      return null;
+    }
+    return { sub, email, name, tokenType };
   } catch {
     return null;
   }
+}
+
+export async function verifyRefreshToken(token: string): Promise<SessionPayload | null> {
+  const payload = await verifySessionToken(token);
+  if (!payload || payload.tokenType !== "refresh") return null;
+  return payload;
 }

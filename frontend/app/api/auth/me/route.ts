@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth-server";
-import { findUserById } from "@/lib/users-store";
+import { findUserByIdDb } from "@/lib/server/services/user-service";
 
 export const runtime = "nodejs";
 
@@ -9,7 +9,7 @@ export async function GET() {
   if (!session) {
     return NextResponse.json({ user: null }, { status: 200 });
   }
-  const row = findUserById(session.sub);
+  const row = await findUserByIdDb(session.sub);
   if (!row) {
     return NextResponse.json({ user: null }, { status: 200 });
   }
